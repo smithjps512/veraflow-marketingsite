@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-base: #0A0A0B;
+  --color-surface: #111114;
+  --color-surface-raised: #18181C;
+  --color-border: #2A2A32;
+  --color-border-hover: #38383F;
+  --color-maroon: #861F41;
+  --color-orange: #E5751F;
+  --color-ok: #4CAF7D;
+  --color-risk: #E5751F;
+  --color-exception: #D14F7A;
+  --font-headline: "Barlow Condensed", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-base);
+  color: #E0E0E6;
+  font-family: var(--font-body);
+}
+
+/* Scroll-triggered reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delays */
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+.delay-4 { transition-delay: 0.4s; }
+.delay-5 { transition-delay: 0.5s; }
+
+/* Typing cursor blink for SA chat */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor-blink::after {
+  content: "▋";
+  animation: blink 1s step-end infinite;
+  color: var(--color-orange);
+}
+
+/* Scan gate pulse */
+@keyframes pulse-gate {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(134, 31, 65, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(134, 31, 65, 0); }
+}
+.gate-pulse {
+  animation: pulse-gate 2s ease-in-out infinite;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-base); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
