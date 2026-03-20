@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veraflow — Supply Chain Data You Can Trust</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0d0a0b;
+  --surface:   #130f10;
+  --surface2:  #1a1415;
+  --surface3:  #211a1b;
+  --border:    #2e2123;
+  --border2:   #3d2b2e;
+  --text:      #e0d0d2;
+  --text-dim:  #7a5f63;
+  --text-bright: #f5eeef;
+  /* VT Chicago Maroon + Burnt Orange brand */
+  --vt-maroon: #630031;
+  --vt-orange: #CF4420;
+  --vt-orange-light: #e85a30;
+  /* Trust taxonomy — functional data colors, kept distinct */
+  --decisive:  #22d47a;
+  --decisive-bg: rgba(34,212,122,0.07);
+  --decisive-b:  rgba(34,212,122,0.22);
+  --informed:  #f0a030;
+  --informed-bg: rgba(240,160,48,0.07);
+  --informed-b:  rgba(240,160,48,0.22);
+  --derived:   #5b9cf6;
+  --derived-bg:  rgba(91,156,246,0.07);
+  --derived-b:   rgba(91,156,246,0.22);
+  --obsol:     #b86cf5;
+  --obsol-bg:  rgba(184,108,245,0.07);
+  --obsol-b:   rgba(184,108,245,0.22);
+  /* True yield → VT Burnt Orange as brand accent */
+  --ty:        #CF4420;
+  --ty-bg:     rgba(207,68,32,0.08);
+  --ty-b:      rgba(207,68,32,0.30);
+  --red:       #e84040;
+  --moog-red:  #630031;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── GRID TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── TYPOGRAPHY ── */
+.mono { font-family: 'IBM Plex Mono', monospace; }
+.cond { font-family: 'Barlow Condensed', sans-serif; }
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(11,13,18,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.nav-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--text-bright);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo-mark {
+  width: 28px; height: 28px;
+  background: var(--vt-maroon);
+  border: 1px solid var(--vt-orange);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--vt-orange);
+  flex-shrink: 0;
+}
+.nav-links {
+  display: flex;
+  gap: 28px;
+  margin-left: 40px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--text-bright); }
+.nav-cta {
+  margin-left: auto;
+  background: var(--vt-orange);
+  color: #fff;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.nav-cta:hover { background: var(--vt-orange-light); }
+
+/* ── SECTIONS ── */
+section { position: relative; z-index: 1; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+.section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.05;
+  color: var(--text-bright);
+  letter-spacing: -0.5px;
+}
+.section-sub {
+  font-size: 17px;
+  color: var(--text-dim);
+  max-width: 580px;
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
+/* ── BTN ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+.btn-primary { background: var(--vt-orange); color: #fff; }
+.btn-primary:hover { background: var(--vt-orange-light); opacity: 1; }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+.btn-ghost:hover { border-color: var(--text-dim); color: var(--text-bright); }
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+#hero {
+  padding: 160px 0 100px;
+  overflow: hidden;
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ty-bg);
+  border: 1px solid var(--ty-b);
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--vt-orange);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(44px, 5vw, 72px);
+  line-height: 0.95;
+  letter-spacing: -1px;
+  color: var(--text-bright);
+  margin-bottom: 20px;
+}
+.hero-title em {
+  font-style: normal;
+  color: var(--vt-orange);
+}
+.hero-body {
+  font-size: 18px;
+  color: var(--text-dim);
+  line-height: 1.65;
+  max-width: 480px;
+  margin-bottom: 32px;
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-trust-strip {
+  display: flex;
+  gap: 6px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+.trust-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.tp-d { background: var(--decisive-bg); border: 1px solid var(--decisive-b); color: var(--decisive); }
+.tp-i { background: var(--informed-bg); border: 1px dashed var(--informed-b); color: var(--informed); }
+.tp-r { background: var(--derived-bg); border: 1px solid var(--derived-b); color: var(--derived); }
+.tp-o { background: var(--obsol-bg); border: 1px solid var(--obsol-b); color: var(--obsol); }
+.tp-t { background: var(--ty-bg); border: 1px solid var(--ty-b); color: var(--vt-orange); }
+
+/* Hero dashboard preview */
+.hero-dashboard {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+.hd-bar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hd-dot { width: 10px; height: 10px; border-radius: 50%; }
+.hd-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+.hd-body { padding: 16px; }
+.hd-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.hd-kpi {
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.hd-kpi-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.hd-kpi-lbl {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.hd-customers { display: flex; flex-direction: column; gap: 6px; }
+.hd-customer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 8px 12px;
+}
+.rag-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.rag-g { background: var(--decisive); box-shadow: 0 0 6px var(--decisive); }
+.rag-a { background: var(--informed); box-shadow: 0 0 6px var(--informed); }
+.rag-r { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.hd-cust-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-bright);
+  flex: 1;
+}
+.hd-cust-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+}
+.hd-cust-status {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.hd-s-g { background: var(--decisive-bg); color: var(--decisive); }
+.hd-s-a { background: var(--informed-bg); color: var(--informed); }
+.hd-s-r { background: rgba(232,64,64,0.1); color: var(--red); }
+
+/* ══════════════════════════════════════
+   TRUST MODEL
+══════════════════════════════════════ */
+#trust { padding: 100px 0; }
+.trust-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+  margin-bottom: 60px;
+}
+.trust-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.trust-card {
+  border-radius: 8px;
+  padding: 20px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+.trust-card:hover { transform: translateY(-3px); }
+.tc-d { background: var(--decisive-bg); border: 1px solid var(--decisive-b); }
+.tc-i { background: var(--informed-bg); border: 1px dashed var(--informed-b); }
+.tc-r { background: var(--derived-bg); border: 1px solid var(--derived-b); }
+.tc-o { background: var(--obsol-bg); border: 1px solid var(--obsol-b); }
+.tc-t { background: var(--ty-bg); border: 1px solid var(--ty-b); }
+.trust-card-icon {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  margin-bottom: 12px;
+}
+.tc-d .trust-card-icon { background: var(--decisive); }
+.tc-i .trust-card-icon { background: var(--informed); }
+.tc-r .trust-card-icon { background: var(--derived); }
+.tc-o .trust-card-icon { background: var(--obsol); }
+.tc-t .trust-card-icon { background: var(--vt-maroon); border: 1px solid var(--vt-orange); }
+.trust-card-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.tc-d .trust-card-tag { color: var(--decisive); }
+.tc-i .trust-card-tag { color: var(--informed); }
+.tc-r .trust-card-tag { color: var(--derived); }
+.tc-o .trust-card-tag { color: var(--obsol); }
+.tc-t .trust-card-tag { color: var(--vt-orange); }
+.trust-card-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+.trust-card-def {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.trust-rule {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--vt-orange);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+.trust-rule strong { color: var(--vt-orange); font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase; }
+
+/* ══════════════════════════════════════
+   PIPELINE
+══════════════════════════════════════ */
+#pipeline { padding: 100px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.pipeline-stages {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  margin-top: 48px;
+  position: relative;
+}
+.pipeline-stages::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 40px;
+  right: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--decisive-b), var(--ty-b));
+  z-index: 0;
+}
+.ps-stage {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 14px;
+  position: relative;
+  z-index: 1;
+  transition: border-color 0.15s;
+}
+.ps-stage:hover { border-color: var(--border2); }
+.ps-stage.ps-informed { border-style: dashed; border-color: var(--informed-b); }
+.ps-stage.ps-obsol { border-color: var(--obsol-b); }
+.ps-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.ps-icon { font-size: 18px; margin-bottom: 8px; display: block; }
+.ps-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-bright);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.ps-trust {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+.pt-d { background: var(--decisive-bg); color: var(--decisive); }
+.pt-i { background: var(--informed-bg); color: var(--informed); }
+.pt-o { background: var(--obsol-bg); color: var(--obsol); }
+.pt-t { background: var(--ty-bg); color: var(--vt-orange); }
+.pt-c { background: var(--derived-bg); color: var(--derived); }
+.ps-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+.pipeline-row2 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  margin-top: 2px;
+}
+
+/* ══════════════════════════════════════
+   TRUE YIELD
+══════════════════════════════════════ */
+#trueyield { padding: 100px 0; }
+.ty-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.yield-chain {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+}
+.yc-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+.yc-stages {
+  display: flex;
+  gap: 4px;
+  align-items: stretch;
+  margin-bottom: 20px;
+}
+.yc-stage {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 10px;
+  text-align: center;
+}
+.yc-stage.yc-true {
+  background: var(--ty-bg);
+  border-color: var(--ty-b);
+}
+.yc-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.yc-stage:nth-child(1) .yc-val { color: var(--decisive); }
+.yc-stage:nth-child(2) .yc-val { color: var(--derived); }
+.yc-stage:nth-child(3) .yc-val { color: var(--informed); }
+.yc-stage.yc-true .yc-val { color: var(--vt-orange); }
+.yc-lbl {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+.yc-arrow {
+  display: flex;
+  align-items: center;
+  color: var(--border2);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.yc-gap-note {
+  background: rgba(232,64,64,0.07);
+  border: 1px solid rgba(232,64,64,0.2);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+.yc-gap-note strong { color: var(--red); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+.ty-features {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 32px;
+}
+.ty-feature {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.ty-feature-icon {
+  width: 36px; height: 36px;
+  border-radius: 6px;
+  background: var(--ty-bg);
+  border: 1px solid var(--ty-b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.ty-feature-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+}
+.ty-feature-body { font-size: 13px; color: var(--text-dim); line-height: 1.55; }
+
+/* ══════════════════════════════════════
+   SUPPLIER SCORECARD
+══════════════════════════════════════ */
+#scorecard { padding: 100px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.sc-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.sc-card {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 24px;
+}
+.sc-supplier-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sc-supplier-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text-bright);
+}
+.sc-score-big {
+  margin-left: auto;
+  text-align: right;
+}
+.sc-score-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 36px;
+  line-height: 1;
+  color: var(--decisive);
+}
+.sc-score-lbl {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.sc-components { display: flex; flex-direction: column; gap: 10px; }
+.sc-comp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sc-comp-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  width: 160px;
+  flex-shrink: 0;
+}
+.sc-comp-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--surface3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.sc-comp-bar { height: 100%; border-radius: 3px; }
+.sc-comp-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text);
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.sc-comp-weight {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.sc-config-note {
+  margin-top: 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  line-height: 1.6;
+}
+.sc-config-note span { color: var(--vt-orange); }
+
+/* ══════════════════════════════════════
+   VERAFLOW SA
+══════════════════════════════════════ */
+#sa { padding: 100px 0; }
+.sa-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.sa-capabilities {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
+}
+.sa-cap {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: border-color 0.15s;
+}
+.sa-cap:hover { border-color: var(--border2); }
+.sa-cap-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--vt-orange);
+  background: var(--ty-bg);
+  border: 1px solid var(--ty-b);
+  border-radius: 3px;
+  padding: 2px 7px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.sa-cap-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+}
+.sa-cap-query {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+  background: var(--surface2);
+  border-radius: 3px;
+  padding: 4px 8px;
+  display: block;
+  margin-bottom: 4px;
+}
+.sa-cap-body { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+.sa-chat {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.sa-chat-bar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sa-chat-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--vt-orange);
+  box-shadow: 0 0 6px var(--vt-orange);
+}
+.sa-chat-name {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--vt-orange);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.sa-chat-note {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+.sa-chat-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.sa-msg {
+  max-width: 85%;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+.sa-msg-user {
+  background: var(--ty-bg);
+  border: 1px solid var(--ty-b);
+  color: var(--text-bright);
+  align-self: flex-end;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+}
+.sa-msg-ai {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  align-self: flex-start;
+}
+.sa-msg-ai strong { color: var(--vt-orange); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+.sa-msg-ai .sa-risk { color: var(--informed); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+.sa-msg-ai .sa-decisive { color: var(--decisive); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+.sa-msg-ai .sa-block { display: block; margin-top: 6px; padding: 6px 10px; background: var(--surface3); border-radius: 4px; border-left: 2px solid var(--vt-orange); font-size: 11px; color: var(--text-dim); }
+.sa-chat-input {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--surface2);
+}
+.sa-input {
+  flex: 1;
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 7px 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  outline: none;
+}
+.sa-send {
+  background: var(--vt-orange);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background 0.15s;
+}
+.sa-send:hover { background: var(--vt-orange-light); }
+
+/* ══════════════════════════════════════
+   PERSONAS
+══════════════════════════════════════ */
+#personas { padding: 100px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.persona-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-top: 48px;
+}
+.persona-card {
+  background: var(--surface2);
+  padding: 40px;
+  border: 1px solid var(--border);
+}
+.persona-card:first-child { border-radius: 8px 0 0 8px; border-right: none; }
+.persona-card:last-child { border-radius: 0 8px 8px 0; }
+.persona-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+.pt-mfg { background: var(--decisive-bg); border: 1px solid var(--decisive-b); color: var(--decisive); }
+.pt-cust { background: var(--ty-bg); border: 1px solid var(--ty-b); color: var(--vt-orange); }
+.persona-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+.persona-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.6; }
+.persona-features { display: flex; flex-direction: column; gap: 10px; }
+.pf-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.pf-check { flex-shrink: 0; margin-top: 2px; }
+.pf-check-d { color: var(--decisive); }
+.pf-check-t { color: var(--vt-orange); }
+.persona-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  width: 2px;
+  background: var(--border);
+  align-self: stretch;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════
+   PRICING
+══════════════════════════════════════ */
+#pricing { padding: 100px 0; }
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.price-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: border-color 0.15s;
+  position: relative;
+}
+.price-card:hover { border-color: var(--border2); }
+.price-card.featured {
+  border-color: var(--ty-b);
+  background: rgba(99,0,49,0.08);
+  border-color: rgba(207,68,32,0.3);
+}
+.price-featured-label {
+  position: absolute;
+  top: -1px; left: 50%; transform: translateX(-50%);
+  background: var(--vt-orange);
+  color: #fff;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 14px;
+  border-radius: 0 0 6px 6px;
+}
+.price-tier {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.price-card:not(.featured) .price-tier { color: var(--text-dim); }
+.price-card.featured .price-tier { color: var(--vt-orange); }
+.price-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--text-bright);
+  margin-bottom: 2px;
+}
+.price-val sup { font-size: 20px; vertical-align: top; margin-top: 8px; }
+.price-period {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+.price-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.price-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+  flex: 1;
+}
+.pf-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+.pf-row .pf-check { color: var(--decisive); }
+.price-card.featured .pf-row .pf-check { color: var(--vt-orange); }
+.price-btn { width: 100%; text-align: center; justify-content: center; }
+.price-btn-featured { background: var(--vt-orange); color: #fff; }
+.price-note {
+  text-align: center;
+  margin-top: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+/* ══════════════════════════════════════
+   DEMO CTA
+══════════════════════════════════════ */
+#demo { padding: 100px 0; background: var(--surface); border-top: 1px solid var(--border); }
+.demo-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.demo-points {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
+}
+.dp-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.dp-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--vt-orange);
+  background: var(--ty-bg);
+  border: 1px solid var(--ty-b);
+  border-radius: 3px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.dp-text { font-size: 14px; color: var(--text-dim); line-height: 1.55; }
+.dp-text strong { color: var(--text-bright); }
+.demo-form {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 32px;
+}
+.demo-form-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--text-bright);
+  margin-bottom: 6px;
+}
+.demo-form-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.form-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.form-input, .form-select, .form-textarea {
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 10px 14px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  color: var(--text-bright);
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--ty-b); }
+.form-textarea { resize: vertical; min-height: 80px; font-family: 'Barlow', sans-serif; }
+.form-select option { background: var(--surface3); color: var(--text); }
+.form-submit {
+  width: 100%;
+  background: var(--vt-orange);
+  color: #fff;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.15s;
+}
+.form-submit:hover { background: var(--vt-orange-light); }
+.form-note {
+  text-align: center;
+  margin-top: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.3px;
+}
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 40px 48px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.footer-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--text-bright);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.footer-tagline {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.footer-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin-left: auto;
+}
+.footer-links a {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.15s;
+}
+.footer-links a:hover { color: var(--text); }
+.footer-copy {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+  width: 100%;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-certs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.footer-cert {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 7px;
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 960px) {
+  .hero-inner, .trust-intro, .ty-intro, .sc-layout, .sa-layout, .demo-layout { grid-template-columns: 1fr; gap: 40px; }
+  .hero-dashboard { display: none; }
+  .trust-cards { grid-template-columns: repeat(3, 1fr); }
+  .pipeline-stages, .pipeline-row2 { grid-template-columns: repeat(3, 1fr); }
+  .persona-grid { grid-template-columns: 1fr; }
+  .persona-card:first-child, .persona-card:last-child { border-radius: 8px; border: 1px solid var(--border); }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .form-row { grid-template-columns: 1fr; }
+  .container { padding: 0 24px; }
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  footer { padding: 24px; }
+}
+
+/* fade-in animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scanline {
+  0%, 100% { top: 15%; opacity: 0.4; }
+  50%       { top: 75%; opacity: 1; }
+}
+.fade-up { animation: fadeUp 0.6s ease both; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">V</div>
+    VERAFLOW
+  </a>
+  <ul class="nav-links">
+    <li><a href="#trust">Data Model</a></li>
+    <li><a href="#pipeline">Pipeline</a></li>
+    <li><a href="#capture">Capture</a></li>
+    <li><a href="#trueyield">True Yield</a></li>
+    <li><a href="#scorecard">Scorecard</a></li>
+    <li><a href="#sa">Veraflow SA</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#demo" class="nav-cta">Request Demo</a>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-eyebrow fade-up">
+          <span>◈</span> Supply Chain Intelligence Platform
+        </div>
+        <h1 class="hero-title fade-up delay-1">
+          Supply chain data<br>you can <em>trust.</em>
+        </h1>
+        <p class="hero-body fade-up delay-2">
+          Veraflow is the first supply chain platform built around a single organizing principle: every field is classified as decisive, informed, or derived — and the difference is always visible. No more guessing which numbers you can act on.
+        </p>
+        <div class="hero-actions fade-up delay-3">
+          <a href="#demo" class="btn btn-primary">Request a Demo →</a>
+          <a href="#trust" class="btn btn-ghost">See the Data Model</a>
+        </div>
+        <div class="hero-trust-strip fade-up delay-4">
+          <span class="trust-pill tp-d">DECISIVE · verified events</span>
+          <span class="trust-pill tp-i">INFORMED · supplier estimates</span>
+          <span class="trust-pill tp-r">DERIVED · calculated</span>
+          <span class="trust-pill tp-o">OBSOL · program risk</span>
+          <span class="trust-pill tp-t">TRUE YIELD · field reality</span>
+        </div>
+      </div>
+      <div class="hero-dashboard fade-up delay-2">
+        <div class="hd-bar">
+          <div class="hd-dot" style="background:#22d47a"></div>
+          <div class="hd-dot" style="background:#f0a030"></div>
+          <div class="hd-dot" style="background:#e84040"></div>
+          <span class="hd-label">Health Overview — All Customers</span>
+        </div>
+        <div class="hd-body">
+          <div class="hd-kpi-row">
+            <div class="hd-kpi">
+              <div class="hd-kpi-val" style="color:#22d47a">94.2%</div>
+              <div class="hd-kpi-lbl">OTD Rate</div>
+            </div>
+            <div class="hd-kpi">
+              <div class="hd-kpi-val" style="color:#CF4420">89.6%</div>
+              <div class="hd-kpi-lbl">True Yield</div>
+            </div>
+            <div class="hd-kpi">
+              <div class="hd-kpi-val" style="color:#5b9cf6">127</div>
+              <div class="hd-kpi-lbl">Active POs</div>
+            </div>
+          </div>
+          <div class="hd-customers">
+            <div class="hd-customer">
+              <div class="rag-dot rag-g"></div>
+              <span class="hd-cust-name">Northrop Grumman</span>
+              <span class="hd-cust-meta">12 POs · 96.1% yield</span>
+              <span class="hd-cust-status hd-s-g">On Track</span>
+            </div>
+            <div class="hd-customer">
+              <div class="rag-dot rag-a"></div>
+              <span class="hd-cust-name">L3Harris Technologies</span>
+              <span class="hd-cust-meta">8 POs · 88.4% yield</span>
+              <span class="hd-cust-status hd-s-a">At Risk</span>
+            </div>
+            <div class="hd-customer">
+              <div class="rag-dot rag-r"></div>
+              <span class="hd-cust-name">Curtiss-Wright</span>
+              <span class="hd-cust-meta">5 POs · OB Hold</span>
+              <span class="hd-cust-status hd-s-r">Blocked</span>
+            </div>
+            <div class="hd-customer">
+              <div class="rag-dot rag-g"></div>
+              <span class="hd-cust-name">Raytheon</span>
+              <span class="hd-cust-meta">19 POs · 97.3% yield</span>
+              <span class="hd-cust-status hd-s-g">On Track</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TRUST MODEL
+══════════════════════════════════════ -->
+<section id="trust">
+  <div class="container">
+    <div class="trust-intro">
+      <div>
+        <div class="section-label">The Veraflow Data Model</div>
+        <h2 class="section-title">Five types of data. Only one you can act on.</h2>
+      </div>
+      <div>
+        <p class="section-sub" style="max-width:100%">
+          Every supply chain platform mixes verified events with supplier estimates and manual guesses into the same data layer. When a delivery slips, nobody knows which number caused it. Veraflow classifies every field so you always know what you're looking at.
+        </p>
+        <div class="trust-rule">
+          <strong>The rule:</strong> Scheduling, shipping, and quality decisions are only made from DECISIVE data. INFORMED data is always labeled as an estimate. DERIVED data shows its sources. The difference is never hidden.
+        </div>
+      </div>
+    </div>
+    <div class="trust-cards">
+      <div class="trust-card tc-d">
+        <div class="trust-card-icon"></div>
+        <div class="trust-card-tag">Decisive</div>
+        <div class="trust-card-name">Physically Verified Events</div>
+        <div class="trust-card-def">Timestamped, system-recorded. Dock scans, confirmed counts, signed completions. The only data that drives decisions.</div>
+      </div>
+      <div class="trust-card tc-i">
+        <div class="trust-card-icon"></div>
+        <div class="trust-card-tag">Informed</div>
+        <div class="trust-card-name">Supplier Estimates</div>
+        <div class="trust-card-def">Supplier-provided dates and quantities. Useful for planning. Always labeled. Never treated as fact.</div>
+      </div>
+      <div class="trust-card tc-r">
+        <div class="trust-card-icon"></div>
+        <div class="trust-card-tag">Derived</div>
+        <div class="trust-card-name">Calculated Values</div>
+        <div class="trust-card-def">Computed from decisive inputs. Yield percentages, kit completion, projected shortfalls. Always recalculated from source.</div>
+      </div>
+      <div class="trust-card tc-o">
+        <div class="trust-card-icon"></div>
+        <div class="trust-card-tag">Obsol</div>
+        <div class="trust-card-name">Program Risk Flags</div>
+        <div class="trust-card-def">Obsolescence and change events. Contract-governed. Alerts when unresolved. Hard blocks when no approved path exists.</div>
+      </div>
+      <div class="trust-card tc-t">
+        <div class="trust-card-icon"></div>
+        <div class="trust-card-tag">True Yield</div>
+        <div class="trust-card-name">Field Reality</div>
+        <div class="trust-card-def">Net quality after customer returns with attribution. The number that tells you what actually worked — not what QC approved.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     PIPELINE
+══════════════════════════════════════ -->
+<section id="pipeline">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:8px">
+      <div class="section-label" style="display:inline-block">The Veraflow Pipeline</div>
+    </div>
+    <h2 class="section-title" style="text-align:center">From supplier estimate to customer delivery.</h2>
+    <p style="text-align:center;font-size:15px;color:var(--text-dim);margin-top:10px">Nine stages. Every handoff tracked. Trust classification visible at every step.</p>
+
+    <div class="pipeline-stages">
+      <div class="ps-stage ps-informed">
+        <div class="ps-num">S-00</div>
+        <span class="ps-icon">📋</span>
+        <div class="ps-name">Supplier Delivery Estimate</div>
+        <span class="ps-trust pt-i">Informed</span>
+        <div class="ps-desc">Planning data only. Feeds supplier scorecard when actual arrives.</div>
+      </div>
+      <div class="ps-stage ps-obsol">
+        <div class="ps-num">S-OB</div>
+        <span class="ps-icon">⚠</span>
+        <div class="ps-name">Obsolescence Event</div>
+        <span class="ps-trust pt-o">Program Risk</span>
+        <div class="ps-desc">Fires anytime in lifecycle. Alert-only until contract path fails.</div>
+      </div>
+      <div class="ps-stage">
+        <div class="ps-num">S-01</div>
+        <span class="ps-icon">📦</span>
+        <div class="ps-name">Material to Supplier</div>
+        <span class="ps-trust pt-d">Decisive</span>
+        <div class="ps-desc">Moog-controlled outbound. Ship date decisive on dispatch.</div>
+      </div>
+      <div class="ps-stage">
+        <div class="ps-num">S-02</div>
+        <span class="ps-icon">🔩</span>
+        <div class="ps-name">Material Received</div>
+        <span class="ps-trust pt-d">Decisive</span>
+        <div class="ps-desc">Dock scan + physical count. Delta vs. estimate auto-scores supplier.</div>
+      </div>
+      <div class="ps-stage">
+        <div class="ps-num">S-03</div>
+        <span class="ps-icon">🔬</span>
+        <div class="ps-name">Incoming Inspection</div>
+        <span class="ps-trust pt-d">Decisive</span>
+        <div class="ps-desc">Pass/fail logged. Gates kitting quantity. NCRs issued.</div>
+      </div>
+    </div>
+    <div class="pipeline-row2">
+      <div class="ps-stage">
+        <div class="ps-num">S-04</div>
+        <span class="ps-icon">🧰</span>
+        <div class="ps-name">Kit Tracking</div>
+        <span class="ps-trust pt-d">Decisive</span>
+        <div class="ps-desc">Partial kit is trusted data. Missing components drive procurement.</div>
+      </div>
+      <div class="ps-stage">
+        <div class="ps-num">S-05</div>
+        <span class="ps-icon">⚙️</span>
+        <div class="ps-name">Manufacturing Stations</div>
+        <span class="ps-trust pt-d">Decisive</span>
+        <div class="ps-desc">"4 of 7 stations." Per-station yield. Real-time OTD impact.</div>
+      </div>
+      <div class="ps-stage">
+        <div class="ps-num">S-06 / S-07</div>
+        <span class="ps-icon">✅</span>
+        <div class="ps-name">Complete + Final Insp.</div>
+        <span class="ps-trust pt-c">Conditional</span>
+        <div class="ps-desc">Final inspection required per part/contract. CoA/CoC gates shipment.</div>
+      </div>
+      <div class="ps-stage">
+        <div class="ps-num">S-08</div>
+        <span class="ps-icon">🚚</span>
+        <div class="ps-name">Shipped to Customer</div>
+        <span class="ps-trust pt-d">Decisive</span>
+        <div class="ps-desc">Carrier-confirmed delivery — not customer acceptance.</div>
+      </div>
+      <div class="ps-stage">
+        <div class="ps-num">S-09</div>
+        <span class="ps-icon">↩️</span>
+        <div class="ps-name">Customer Returns</div>
+        <span class="ps-trust pt-t">True Yield</span>
+        <div class="ps-desc">Attribution-coded returns close the loop on real field quality.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     CAPTURE — MOBILE PWA
+══════════════════════════════════════ -->
+<section id="capture" style="padding:100px 0;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+
+      <!-- Phone mockup -->
+      <div style="display:flex;justify-content:center;">
+        <div style="width:260px;position:relative;">
+          <!-- Phone shell -->
+          <div style="background:var(--surface2);border:2px solid var(--border2);border-radius:36px;padding:16px 12px;box-shadow:0 40px 80px rgba(0,0,0,0.5);">
+            <!-- Notch -->
+            <div style="width:80px;height:10px;background:var(--surface3);border-radius:5px;margin:0 auto 12px;"></div>
+            <!-- Screen -->
+            <div style="background:var(--bg);border-radius:20px;overflow:hidden;border:1px solid var(--border);">
+              <!-- App bar -->
+              <div style="background:var(--vt-maroon);padding:12px 14px;display:flex;align-items:center;gap:8px;">
+                <div style="width:20px;height:20px;background:var(--vt-orange);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#fff;font-weight:700;">V</div>
+                <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;color:#fff;">VERAFLOW CAPTURE</span>
+              </div>
+              <!-- Scan frame area -->
+              <div style="background:#0a0a0a;height:160px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+                <div style="width:120px;height:120px;border:2px solid var(--vt-orange);border-radius:8px;position:relative;">
+                  <div style="position:absolute;top:-2px;left:-2px;width:20px;height:20px;border-top:3px solid var(--vt-orange);border-left:3px solid var(--vt-orange);border-radius:2px 0 0 0;"></div>
+                  <div style="position:absolute;top:-2px;right:-2px;width:20px;height:20px;border-top:3px solid var(--vt-orange);border-right:3px solid var(--vt-orange);border-radius:0 2px 0 0;"></div>
+                  <div style="position:absolute;bottom:-2px;left:-2px;width:20px;height:20px;border-bottom:3px solid var(--vt-orange);border-left:3px solid var(--vt-orange);border-radius:0 0 0 2px;"></div>
+                  <div style="position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-bottom:3px solid var(--vt-orange);border-right:3px solid var(--vt-orange);border-radius:0 0 2px 0;"></div>
+                  <!-- Scan line animation -->
+                  <div style="position:absolute;left:4px;right:4px;height:1px;background:linear-gradient(90deg,transparent,var(--vt-orange),transparent);top:40%;animation:scanline 1.8s ease-in-out infinite;"></div>
+                </div>
+                <div style="position:absolute;bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(207,68,32,0.7);letter-spacing:1px;">ALIGN BARCODE · QR · DATAMATRIX</div>
+              </div>
+              <!-- Confirmed event card -->
+              <div style="padding:12px;">
+                <div style="background:var(--decisive-bg);border:1px solid var(--decisive-b);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                    <div style="width:6px;height:6px;border-radius:50%;background:var(--decisive);box-shadow:0 0 4px var(--decisive);"></div>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--decisive);letter-spacing:1px;text-transform:uppercase;">Event Captured · Decisive</span>
+                  </div>
+                  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;color:var(--text-bright);margin-bottom:2px;">S-02 · Supplier Pack-Out</div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);line-height:1.6;">
+                    PO-4821 · SR15130-1<br>
+                    Qty: 50 · Lot: L240318-A<br>
+                    <span style="color:var(--decisive)">✓ GPS + timestamp locked</span>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                  <div style="background:var(--vt-orange);border-radius:6px;padding:8px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.5px;color:#fff;">CONFIRM</div>
+                  <div style="background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:8px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;color:var(--text-dim);">EXCEPTION</div>
+                </div>
+              </div>
+            </div>
+            <!-- Home indicator -->
+            <div style="width:60px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0;"></div>
+          </div>
+          <!-- Floating badge -->
+          <div style="position:absolute;top:-12px;right:-20px;background:var(--surface);border:1px solid var(--decisive-b);border-radius:8px;padding:8px 12px;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--decisive);letter-spacing:0.5px;">No app install required</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;color:var(--text-bright);margin-top:2px;">Open in any browser</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copy -->
+      <div>
+        <div class="section-label">Veraflow Capture</div>
+        <h2 class="section-title">DECISIVE data has to start somewhere.</h2>
+        <p class="section-sub">
+          The intelligence layer is only as good as the events that feed it. Veraflow Capture is a mobile-first companion app — open any smartphone browser, scan the part, confirm the event. No install, no hardware procurement, no IT project.
+        </p>
+
+        <div style="display:flex;flex-direction:column;gap:20px;margin-top:32px;">
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:40px;height:40px;border-radius:8px;background:var(--ty-bg);border:1px solid var(--ty-b);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📱</div>
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;color:var(--text-bright);margin-bottom:4px;">Progressive Web App — any smartphone</div>
+              <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">Works on iOS and Android. No app store approval, no MDM enrollment, no corporate IT requirement. Open the link, scan, done. Suppliers can be onboarded in minutes.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:40px;height:40px;border-radius:8px;background:var(--ty-bg);border:1px solid var(--ty-b);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔲</div>
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;color:var(--text-bright);margin-bottom:4px;">QR, barcode, DataMatrix — native camera</div>
+              <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">Modern phone cameras read all major label formats without a dedicated scanner. Each scan creates a timestamped, GPS-tagged DECISIVE event directly in the Veraflow pipeline.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:40px;height:40px;border-radius:8px;background:var(--ty-bg);border:1px solid var(--ty-b);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">⚡</div>
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;color:var(--text-bright);margin-bottom:4px;">Exception handling built in</div>
+              <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">Quantity mismatch? Damaged label? Wrong part? Capture logs the exception with photo evidence and routes it for resolution — without blocking the physical flow.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:40px;height:40px;border-radius:8px;background:var(--ty-bg);border:1px solid var(--ty-b);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏭</div>
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;color:var(--text-bright);margin-bottom:4px;">Supplier mandate or voluntary adoption</div>
+              <div style="font-size:13px;color:var(--text-dim);line-height:1.55;">Manufacturers with supplier leverage can require scan compliance as a contract condition. For others, adoption is incentivized — suppliers with higher scan compliance receive better scorecard ratings.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coming soon badge -->
+        <div style="margin-top:28px;display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;border-left:3px solid var(--vt-orange);">
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--text-bright);margin-bottom:2px;">Available at Enterprise tier</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.6;">Included in Enterprise plans · Ask about early access during your demo</div>
+          </div>
+          <a href="#demo" class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;">Request Demo</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TRUE YIELD
+══════════════════════════════════════ -->
+<section id="trueyield">
+  <div class="container">
+    <div class="ty-intro">
+      <div>
+        <div class="section-label">True Yield</div>
+        <h2 class="section-title">The number your QC report doesn't show you.</h2>
+        <p class="section-sub">Manufacturing yield tells you what left the floor. Final inspection yield tells you what cleared QC. True yield tells you what the customer kept — and used.</p>
+        <div class="ty-features">
+          <div class="ty-feature">
+            <div class="ty-feature-icon">🎯</div>
+            <div>
+              <div class="ty-feature-title">Attribution, not just counts</div>
+              <div class="ty-feature-body">Every return is attributed: supplier defect, manufacturing error, design nonconformance, or customer error. Customer errors are excluded from true yield. The rest are assigned to the right party.</div>
+            </div>
+          </div>
+          <div class="ty-feature">
+            <div class="ty-feature-icon">📊</div>
+            <div>
+              <div class="ty-feature-title">Per-customer, per-PO, per-part</div>
+              <div class="ty-feature-body">True yield rolls up to every level — a single part number, a full PO, a customer relationship, or your entire operation over any time period.</div>
+            </div>
+          </div>
+          <div class="ty-feature">
+            <div class="ty-feature-icon">🔗</div>
+            <div>
+              <div class="ty-feature-title">Supplier contribution visible</div>
+              <div class="ty-feature-body">Material defects trace back to the supplier who shipped them. Over time you see exactly which suppliers are contributing to field failures — before it damages a customer relationship.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="yield-chain">
+          <div class="yc-title">◈ Yield Chain — Example PO · PN-SR15130</div>
+          <div class="yc-stages">
+            <div class="yc-stage">
+              <div class="yc-val">96.4%</div>
+              <div class="yc-lbl">Incoming</div>
+            </div>
+            <div class="yc-arrow">→</div>
+            <div class="yc-stage">
+              <div class="yc-val">94.1%</div>
+              <div class="yc-lbl">Mfg Flow</div>
+            </div>
+            <div class="yc-arrow">→</div>
+            <div class="yc-stage">
+              <div class="yc-val">98.7%</div>
+              <div class="yc-lbl">Final Insp</div>
+            </div>
+            <div class="yc-arrow">→</div>
+            <div class="yc-stage yc-true">
+              <div class="yc-val">89.6%</div>
+              <div class="yc-lbl">True Yield ✦</div>
+            </div>
+          </div>
+          <div class="yc-gap-note">
+            <strong>9.1 point gap</strong> between final inspection yield and true yield. Three returns attributed to MATERIAL_DEFECT (supplier). Two attributed to MANUFACTURING_ERROR. Zero attributed to CUSTOMER_ERROR. This gap was invisible before Veraflow.
+          </div>
+        </div>
+        <div style="margin-top:16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Return Attribution Breakdown</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;font-size:12px">
+              <span style="width:130px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--obsol)">MATERIAL_DEFECT</span>
+              <div style="flex:1;height:6px;background:var(--surface3);border-radius:3px"><div style="width:60%;height:100%;background:var(--obsol);border-radius:3px"></div></div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim)">→ Supplier</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:12px">
+              <span style="width:130px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red)">MFG_ERROR</span>
+              <div style="flex:1;height:6px;background:var(--surface3);border-radius:3px"><div style="width:30%;height:100%;background:var(--red);border-radius:3px"></div></div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim)">→ Internal</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:12px">
+              <span style="width:130px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--decisive)">CUSTOMER_ERROR</span>
+              <div style="flex:1;height:6px;background:var(--surface3);border-radius:3px"><div style="width:0%;height:100%;background:var(--decisive);border-radius:3px"></div></div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--decisive)">Excluded ✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SUPPLIER SCORECARD
+══════════════════════════════════════ -->
+<section id="scorecard">
+  <div class="container">
+    <div class="sc-layout">
+      <div>
+        <div class="section-label">Supplier Scorecard</div>
+        <h2 class="section-title">You told us 30 days. It's been 47.</h2>
+        <p class="section-sub">Every supplier estimate is compared to the actual receipt. Date accuracy, quantity accuracy, incoming yield, and true yield combine into a composite score — calibrated per customer, not one-size-fits-all.</p>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:28px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="color:var(--vt-orange);font-size:18px;flex-shrink:0;margin-top:2px">◈</span>
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:15px;color:var(--text-bright);margin-bottom:3px">Per-customer score weights</div>
+              <div style="font-size:13px;color:var(--text-dim);line-height:1.5">Different customers have different priorities. A high-volume customer may weight date accuracy at 40%. A defense prime may weight true yield at 45%. Configure once, runs automatically.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="color:var(--vt-orange);font-size:18px;flex-shrink:0;margin-top:2px">◈</span>
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:15px;color:var(--text-bright);margin-bottom:3px">Rolling historical accuracy</div>
+              <div style="font-size:13px;color:var(--text-dim);line-height:1.5">Every estimate a supplier makes is scored against the decisive receipt event. Over time the score self-calibrates — so you know exactly how much to trust the next estimate before you act on it.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="color:var(--vt-orange);font-size:18px;flex-shrink:0;margin-top:2px">◈</span>
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:15px;color:var(--text-bright);margin-bottom:3px">Field returns feed back in</div>
+              <div style="font-size:13px;color:var(--text-dim);line-height:1.5">Material defects returned by customers are attributed to the supplier who shipped the material. True yield is the most consequential score component because it measures downstream impact, not just on-time delivery.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sc-card">
+          <div class="sc-supplier-header">
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Supplier</div>
+              <div class="sc-supplier-name">Acme Precision Parts</div>
+            </div>
+            <div class="sc-score-big">
+              <div class="sc-score-val">74</div>
+              <div class="sc-score-lbl">Composite Score</div>
+            </div>
+          </div>
+          <div class="sc-components">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;display:flex;justify-content:space-between"><span>Component</span><span>Score · Weight</span></div>
+            <div class="sc-comp">
+              <span class="sc-comp-label">Date accuracy</span>
+              <div class="sc-comp-bar-wrap"><div class="sc-comp-bar" style="width:62%;background:var(--informed)"></div></div>
+              <span class="sc-comp-val" style="color:var(--informed)">62</span>
+              <span class="sc-comp-weight">25%</span>
+            </div>
+            <div class="sc-comp">
+              <span class="sc-comp-label">Qty accuracy</span>
+              <div class="sc-comp-bar-wrap"><div class="sc-comp-bar" style="width:84%;background:var(--decisive)"></div></div>
+              <span class="sc-comp-val" style="color:var(--decisive)">84</span>
+              <span class="sc-comp-weight">15%</span>
+            </div>
+            <div class="sc-comp">
+              <span class="sc-comp-label">Incoming yield</span>
+              <div class="sc-comp-bar-wrap"><div class="sc-comp-bar" style="width:91%;background:var(--decisive)"></div></div>
+              <span class="sc-comp-val" style="color:var(--decisive)">91</span>
+              <span class="sc-comp-weight">35%</span>
+            </div>
+            <div class="sc-comp">
+              <span class="sc-comp-label" style="color:var(--vt-orange)">True yield (field)</span>
+              <div class="sc-comp-bar-wrap"><div class="sc-comp-bar" style="width:58%;background:var(--vt-orange)"></div></div>
+              <span class="sc-comp-val" style="color:var(--vt-orange)">58</span>
+              <span class="sc-comp-weight" style="color:var(--vt-orange)">25%</span>
+            </div>
+          </div>
+          <div class="sc-config-note">
+            Weights configured for <span>Northrop Grumman</span> account.<br>
+            Rolling 90-day window · 14 scored events · Last updated 2h ago
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     VERAFLOW SA
+══════════════════════════════════════ -->
+<section id="sa">
+  <div class="container">
+    <div class="sa-layout">
+      <div>
+        <div class="section-label">Veraflow SA</div>
+        <h2 class="section-title">Ask your supply chain anything.</h2>
+        <p class="section-sub">Veraflow SA queries verified decisive data to answer the questions program managers ask every day — in plain English, with specific data references.</p>
+        <div class="sa-capabilities">
+          <div class="sa-cap">
+            <span class="sa-cap-num">01</span>
+            <div>
+              <div class="sa-cap-title">Natural Language PO & Yield Queries</div>
+              <span class="sa-cap-query">"Show me all POs with true yield below 90% in the last 6 months"</span>
+              <div class="sa-cap-body">Ask across any combination of customer, PO, part number, time period, or yield stage. Results cite the decisive fields behind every answer.</div>
+            </div>
+          </div>
+          <div class="sa-cap">
+            <span class="sa-cap-num">02</span>
+            <div>
+              <div class="sa-cap-title">Delivery Risk Narrative</div>
+              <span class="sa-cap-query">"Why is PO-4821 at risk of missing delivery?"</span>
+              <div class="sa-cap-body">SA reads the full pipeline state — station progress, scrap events, kit status, obsolescence flags — and generates a plain-English risk summary with the data that supports it.</div>
+            </div>
+          </div>
+          <div class="sa-cap">
+            <span class="sa-cap-num">03</span>
+            <div>
+              <div class="sa-cap-title">Supplier Scorecard Insights</div>
+              <span class="sa-cap-query">"How has Supplier X's performance trended this year?"</span>
+              <div class="sa-cap-body">SA synthesizes scorecard events, yield trends, and return attribution into a narrative — so you can have an evidence-based conversation with your supplier.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sa-chat">
+          <div class="sa-chat-bar">
+            <div class="sa-chat-dot"></div>
+            <span class="sa-chat-name">Veraflow SA</span>
+            <span class="sa-chat-note">Connected to Veratrace · Queries decisive data only</span>
+          </div>
+          <div class="sa-chat-body">
+            <div class="sa-msg sa-msg-user">Why is PO-4821 at risk of missing delivery?</div>
+            <div class="sa-msg sa-msg-ai">
+              <strong>Risk level: AMBER.</strong> PO-4821 (C62840-004, Curtiss-Wright) has two converging issues:<br><br>
+              <span class="sa-block">① Station 5 of 7 is active. Current station yield: <span class="sa-decisive">94.1%</span>. At this rate, projected shortfall of <span class="sa-risk">3 units</span> against PO qty of 50. Station end timestamp will miss buffer by ~1.8 days.</span>
+              <span class="sa-block">② Supplier estimate (S-00) for the next batch showed <span class="sa-risk">est_arrival Mar 22</span>, but historical date accuracy for this supplier is <span class="sa-risk">62%</span> — treat this estimate with low confidence.</span>
+              Recommend escalating Station 5 to floor supervisor today. If shortfall confirms at Station 6, initiate priority re-order.
+            </div>
+            <div class="sa-msg sa-msg-user">What's the true yield on this PO so far?</div>
+            <div class="sa-msg sa-msg-ai">
+              <strong>True yield to date: <span class="sa-decisive">89.6%</span></strong> (27 units shipped, 3 returns). Attribution: 2 returns MATERIAL_DEFECT → Acme Precision Parts. 1 return MANUFACTURING_ERROR → internal. Zero CUSTOMER_ERROR returns on this PO. <span class="sa-decisive">Supplier composite score updated to 74</span>.
+            </div>
+          </div>
+          <div class="sa-chat-input">
+            <input class="sa-input" placeholder="Ask about any PO, supplier, or yield trend..." readonly>
+            <button class="sa-send">Send</button>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:5px;line-height:1.7">
+          SA only references DECISIVE and DERIVED data in its answers. INFORMED values (supplier estimates) are labeled as estimates and never presented as facts. Every claim is traceable to a named field.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     PERSONAS
+══════════════════════════════════════ -->
+<section id="personas">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:8px">
+      <div class="section-label" style="display:inline-block">Who It's For</div>
+    </div>
+    <h2 class="section-title" style="text-align:center">Built for the manufacturer. Transparent to the customer.</h2>
+    <div class="persona-grid">
+      <div class="persona-card">
+        <div class="persona-tag pt-mfg">For Manufacturers</div>
+        <div class="persona-title">Run your programs on data you can defend.</div>
+        <div class="persona-sub">Program managers, operations leads, and executives get a single source of truth — organized by customer, not by table. Every number traceable to a physical event.</div>
+        <div class="persona-features">
+          <div class="pf-item"><span class="pf-check pf-check-d">✓</span><span>Health overview: all customers, RAG status at a glance</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-d">✓</span><span>Drill from customer → PO → part → station in 3 clicks</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-d">✓</span><span>Supplier scorecard with per-customer weight configuration</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-d">✓</span><span>Obsolescence alerts before they become ship blocks</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-d">✓</span><span>Real-time OTD impact when scrap happens at any station</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-d">✓</span><span>Line of Balance view built in — no separate tool needed</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-d">✓</span><span>Veraflow SA for natural language queries on any data</span></div>
+        </div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-tag pt-cust">For Customers</div>
+        <div class="persona-title">See your programs. Not anyone else's.</div>
+        <div class="persona-sub">Customer portal users see exactly their POs, their shipments, their certificates, and their true yield — and nothing about any other customer. Data isolation is enforced at the database layer, not the application layer.</div>
+        <div class="persona-features">
+          <div class="pf-item"><span class="pf-check pf-check-t">✓</span><span>Your PO status, delivery dates, and at-risk flags</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-t">✓</span><span>Shipment tracking and carrier-confirmed delivery</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-t">✓</span><span>CoA and CoC certificate references per shipment</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-t">✓</span><span>True yield trend for your parts over time</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-t">✓</span><span>Return status and disposition for any parts sent back</span></div>
+          <div class="pf-item"><span class="pf-check pf-check-t">✓</span><span>Zero visibility into other customers' data — ever</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     PRICING
+══════════════════════════════════════ -->
+<section id="pricing">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:8px">
+      <div class="section-label" style="display:inline-block">Pricing</div>
+    </div>
+    <h2 class="section-title" style="text-align:center">Start with one product line.</h2>
+    <p style="text-align:center;font-size:15px;color:var(--text-dim);margin-top:10px;max-width:520px;margin-left:auto;margin-right:auto">No rip-and-replace. Veraflow runs alongside your existing ERP. First product line live in under two weeks.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Foundation</div>
+        <div class="price-val"><sup>$</sup>499</div>
+        <div class="price-period">per month</div>
+        <div class="price-desc">One product line, up to 5 active customers. Full trusted data model and pipeline tracking.</div>
+        <div class="price-features">
+          <div class="pf-row"><span class="pf-check">✓</span><span>Up to 5 active customers</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Full S-00 through S-09 pipeline</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Trust classification on all fields</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Kit tracking + station drill-down</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Incoming + final inspection</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Customer portal access</span></div>
+          <div class="pf-row" style="opacity:0.4"><span>—</span><span>Supplier scorecard</span></div>
+          <div class="pf-row" style="opacity:0.4"><span>—</span><span>True yield analytics</span></div>
+          <div class="pf-row" style="opacity:0.4"><span>—</span><span>Veraflow SA</span></div>
+        </div>
+        <a href="#demo" class="btn btn-ghost price-btn">Get Started</a>
+      </div>
+      <div class="price-card featured">
+        <div class="price-featured-label">Most Popular</div>
+        <div class="price-tier">Professional</div>
+        <div class="price-val"><sup>$</sup>1,499</div>
+        <div class="price-period">per month</div>
+        <div class="price-desc">Unlimited customers, full supplier scorecard, true yield analytics, and Veraflow SA included.</div>
+        <div class="price-features">
+          <div class="pf-row"><span class="pf-check">✓</span><span>Unlimited customers</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Full S-00 through S-09 pipeline</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Trust classification on all fields</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Kit tracking + station drill-down</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Supplier scorecard + scoring history</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>True yield analytics + attribution</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Veraflow SA — all 3 capabilities</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Per-customer scorecard weight config</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Customer portal access</span></div>
+        </div>
+        <a href="#demo" class="btn btn-primary btn-primary price-btn price-btn-featured">Get Started</a>
+      </div>
+      <div class="price-card">
+        <div class="price-tier">Enterprise</div>
+        <div class="price-val" style="font-size:32px;padding-top:6px">Custom</div>
+        <div class="price-period">contact us</div>
+        <div class="price-desc">Multi-product line, API access, SSO, custom integrations, and dedicated customer success.</div>
+        <div class="price-features">
+          <div class="pf-row"><span class="pf-check">✓</span><span>Everything in Professional</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Multiple product lines</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>REST API access</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>SSO / SAML</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>ERP / MES data integration</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Custom scorecard weight rules</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Dedicated customer success</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>SLA + priority support</span></div>
+          <div class="pf-row"><span class="pf-check">✓</span><span>Azure Government / ITAR available</span></div>
+        </div>
+        <a href="#demo" class="btn btn-ghost price-btn">Contact Sales</a>
+      </div>
+    </div>
+    <p class="price-note">All plans include 14-day onboarding support · No long-term commitment required · Pricing in USD</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     DEMO CTA
+══════════════════════════════════════ -->
+<section id="demo">
+  <div class="container">
+    <div class="demo-layout">
+      <div>
+        <div class="section-label">Request a Demo</div>
+        <h2 class="section-title">See Veraflow on your data in 30 minutes.</h2>
+        <p class="section-sub">We'll walk through the full pipeline with your part numbers, your customers, and your supply chain reality — not a generic demo.</p>
+        <div class="demo-points">
+          <div class="dp-item">
+            <span class="dp-num">01</span>
+            <div class="dp-text"><strong>30-minute live walkthrough</strong> — health overview through Veraflow SA, tailored to your production environment.</div>
+          </div>
+          <div class="dp-item">
+            <span class="dp-num">02</span>
+            <div class="dp-text"><strong>Your questions answered</strong> — data model, multi-tenancy, customer portal, integration paths, pricing.</div>
+          </div>
+          <div class="dp-item">
+            <span class="dp-num">03</span>
+            <div class="dp-text"><strong>No long-term commitment</strong> — start with one product line. Expand when you're ready.</div>
+          </div>
+          <div class="dp-item">
+            <span class="dp-num">04</span>
+            <div class="dp-text"><strong>First product line live in 14 days</strong> — we handle onboarding, configuration, and customer portal setup.</div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-form">
+        <div class="demo-form-title">Schedule Your Demo</div>
+        <div class="demo-form-sub">We'll reach out within one business day to confirm a time.</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" placeholder="James">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" placeholder="Smith">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Work Email</label>
+          <input class="form-input" type="email" placeholder="james@yourcompany.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company</label>
+          <input class="form-input" type="text" placeholder="Acme Manufacturing Inc.">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Industry</label>
+          <select class="form-select">
+            <option value="" disabled selected>Select your industry</option>
+            <option>Aerospace & Defense</option>
+            <option>Space</option>
+            <option>Automotive / Motorsport</option>
+            <option>Industrial / Precision Manufacturing</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">What would you like to see? (optional)</label>
+          <textarea class="form-textarea" placeholder="e.g. Supplier scorecard for 3 specific suppliers, True yield on a specific part, Customer portal demo..."></textarea>
+        </div>
+        <button class="form-submit" onclick="alert('Thanks! We\'ll be in touch within one business day.')">Request Demo →</button>
+        <div class="form-note">No spam · No sales pressure · Respond within 1 business day</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <a href="#" class="footer-logo">
+    <div class="nav-logo-mark">V</div>
+    VERAFLOW
+  </a>
+  <div class="footer-tagline">Supply Chain Data You Can Trust · A product of Garden Prayer Publishing LLC</div>
+  <ul class="footer-links">
+    <li><a href="#trust">Data Model</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#demo">Contact</a></li>
+    <li><a href="/cdn-cgi/l/email-protection#86efe8e0e9c6f0e3f4e7e0eae9f1a8efe9"><span class="__cf_email__" data-cfemail="620b0c040d2214071003040e0d154c0b0d">[email&#160;protected]</span></a></li>
+  </ul>
+  <div class="footer-copy">
+    <span>© 2026 Garden Prayer Publishing LLC. All rights reserved.</span>
+    <div class="footer-certs">
+      <span class="footer-cert">AS9100D</span>
+      <span class="footer-cert">MIL-STD-130</span>
+      <span class="footer-cert">CMMC 2.0</span>
+      <span class="footer-cert">ITAR</span>
+      <span class="footer-cert">Azure Government Available</span>
+    </div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// Smooth scroll offset for fixed nav
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      const offset = 72;
+      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+    }
+  });
+});
+
+// Intersection observer for fade-in (non-hero sections)
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('section:not(#hero) .trust-card, section:not(#hero) .ps-stage, section:not(#hero) .price-card, section:not(#hero) .sa-ca
