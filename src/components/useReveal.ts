@@ -11,7 +11,7 @@ export function useReveal() {
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.1 }
     );
 
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));

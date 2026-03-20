@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Veraflow — Physical Truth Layer for Precision Manufacturing",
+  title: "Veraflow — Supply Chain Data You Can Trust",
   description:
-    "Replace manual data entry with hardware scan events at every physical handoff. Real-time visibility from Tier 2 supplier through customer delivery.",
+    "Every field is classified as decisive, informed, or derived — and the difference is always visible. No more guessing which numbers you can act on.",
   openGraph: {
-    title: "Veraflow — Physical Truth Layer for Precision Manufacturing",
+    title: "Veraflow — Supply Chain Data You Can Trust",
     description:
-      "Replace manual data entry with hardware scan events at every physical handoff.",
+      "Every field is classified as decisive, informed, or derived — and the difference is always visible.",
     type: "website",
   },
 };
@@ -28,7 +28,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap"
           rel="stylesheet"
         />
       </head>

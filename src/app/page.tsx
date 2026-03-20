@@ -1,16 +1,18 @@
 "use client";
 
 import { useReveal } from "@/components/useReveal";
-import Nav from "@/components/Nav";
-import Hero from "@/components/Hero";
-import Industries from "@/components/Industries";
-import Platform from "@/components/Platform";
-import Veratrace from "@/components/Veratrace";
-import VeraflowSA from "@/components/VeraflowSA";
-import Outcomes from "@/components/Outcomes";
-import HowItWorks from "@/components/HowItWorks";
-import CTA from "@/components/CTA";
-import Footer from "@/components/Footer";
+import Nav from "@/components/nav/Nav";
+import Hero from "@/components/sections/Hero";
+import Trust from "@/components/sections/Trust";
+import Pipeline from "@/components/sections/Pipeline";
+import Capture from "@/components/sections/Capture";
+import TrueYield from "@/components/sections/TrueYield";
+import Scorecard from "@/components/sections/Scorecard";
+import SA from "@/components/sections/SA";
+import Personas from "@/components/sections/Personas";
+import Pricing from "@/components/sections/Pricing";
+import Demo from "@/components/sections/Demo";
+import Footer from "@/components/sections/Footer";
 
 export default function Home() {
   useReveal();
@@ -20,13 +22,15 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
-        <Industries />
-        <Platform />
-        <Veratrace />
-        <VeraflowSA />
-        <Outcomes />
-        <HowItWorks />
-        <CTA />
+        <Trust />
+        <Pipeline />
+        <Capture />
+        <TrueYield />
+        <Scorecard />
+        <SA />
+        <Personas />
+        <Pricing />
+        <Demo />
       </main>
       <Footer />
     </>
